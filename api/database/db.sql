@@ -1,0 +1,13 @@
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255),
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  role INT
+);
+
+CREATE TABLE password_tokens (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  token VARCHAR(200) NOT NULL,
+  user_id INT NOT NULL
+);
