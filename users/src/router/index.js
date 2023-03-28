@@ -2,6 +2,30 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import RegisterView from '../views/RegisterView.vue'
+import LoginView from '../views/LoginView.vue'
+import UsersView from '../views/UsersView.vue'
+import axios from 'axios'
+
+function AdminAuth(to, from, next) {
+  if (localStorage.getItem('token') != undefined) {
+    var req = {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem('token')
+      }
+    }
+    console.log(req)
+    axios.post("http://localhost:8686/validate", {}, req).then(res => {
+      console.log(res)
+      next()
+    }).catch(err => {
+      console.log(err.response)
+      next("/login")
+    })
+    next()
+  } else {
+    next("/login")
+  }
+}
 
 Vue.use(VueRouter)
 
@@ -15,6 +39,17 @@ const routes = [
     path: '/register',
     name: 'Register',
     component: RegisterView
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: LoginView
+  },
+  {
+    path: '/admin/users',
+    name: 'users',
+    component: UsersView,
+    beforeEnter: AdminAuth
   },
   {
     path: '/about',
