@@ -15,7 +15,7 @@
                         <td>{{ user.email }}</td>
                         <td>{{ user.role === 0 ? 'Usuário Comum' : 'Admin' }}</td>
                         <td>
-                            <button class="button is-success">Editar</button>  |
+                            <router-link :to="{name: 'UserEdit', params: {id: user.id}}"><button class="button is-success">Editar</button></router-link>  |
                             <button class="button is-danger" @click="showModalUser(user.id)">Deletar</button>
                         </td>
                     </tr>
@@ -40,7 +40,7 @@
                   </p>
                   <footer class="card-footer">
                     <a href="#" class="card-footer-item" @click="hideModal()">Cancelar</a>
-                    <a href="#" class="card-footer-item">Deletar</a>
+                    <a href="#" class="card-footer-item" @click="deleteUser()">Deletar</a>
                   </footer>
                 </div>
               </div>
@@ -71,7 +71,8 @@ export default {
     data() {
         return {
             users: [],
-            showModal: false
+            showModal: false,
+            deleteUserId: -1
         }
     },
     methods: {
@@ -79,8 +80,23 @@ export default {
             this.showModal = false
         },
         showModalUser(id) {
-            console.log(id)
+            this.deleteUserId = id
             this.showModal = true
+        },
+        deleteUser() {
+            var req = {
+              headers: {
+                Authorization: "Bearer " + localStorage.getItem('token')
+              }
+            }
+            axios.delete("http://localhost:8686/user/"+this.deleteUserId, req).then(res => {
+                console.log(res)
+                this.showModal = false
+                this.users = this.users.filter(u => u.id != this.deleteUserId)
+            }).catch(err => {
+                console.log(err)
+                this.showModal = false
+            })
         }
     }
 }
